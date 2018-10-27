@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthChain</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quarkchain-web3@0.1.1/dist/quarkchain-web3.js"></script>
+    <script type='text/javascript' src='js/config.js'></script>
+    <script type='text/javascript' src='js/select.js'></script>
+    <script type='text/javascript' src='js/deployContract.js'></script>
+    <script>
+        //let testnetEndpoint = "http://jrpc.testnet.quarkchain.io:38391";
+        //QuarkChain.injectWeb3(web3, testnetEndpoint);
+        //const PRIVATEKEY = '0x7FE624CEAB8618D906C897ADBD68758D75A88F88B298E59D08C518DA8A0ADC77';
+        //web3.qkc.setPrivateKey(PRIVATEKEY);
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            alert('Please activate MetaMask Plugin and reload page! You can find it here: https://metamask.io/')
+        }
+    </script>
+    <style>
+        @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:400,300);
+
+        /* Сетка */
+
+        .container {padding: 0;}
+        .row {width: 100%;max-width: 1140px;min-width: 720px;margin: 0 auto;position: relative;overflow: hidden;}
+        .sixcol {margin-right: 3.09090%;float: left;min-height: 1px;}
+        .row .sixcol {width: 48.45455%;}
+        .row .twelvecol {width: 100%;float: left;}
+        .last {margin-right: 0px;}
+
+        /* Основные стили */
+
+        body {margin: 0;padding: 0;background: #fff;font-family: sans-serif;color: #777;letter-spacing: 0px;font-size: 1.0em;}
+        section.top {margin-top: 60px;}
+        section.demo {background: #f5f5f5;padding-bottom: 20px;border-top: 1px solid #ccc;border-bottom: 1px solid #ccc;}
+        .content {padding: 0 20px;}
+
+        /* Стили для текста */
+
+        a {color: #2e2e2e; text-decoration: none;}
+        a:hover {color: #2e2e2e;}
+        p {margin-bottom: 1.5em;font-weight: 300;}
+        h1 {font-type: sans-serif; fofont-weight: 300;font-size: 1.6em;border-bottom: 1px dashed #ccc;display: inline-block;margin: 30px 0;}
+        .label {color: #777;text-transform: uppercase;margin-left: 10px;font-size: 0.8em;margin-bottom: 5px;display: block;}
+
+        /* Навигация */
+
+        nav ul {padding: 0 20px;}
+        nav li {list-style: none;float: left; margin-right: 20px;padding: 10px;font-weight: 300;}
+        nav li.current {background: #f5f5f5; border: 1px solid #ccc; border-bottom: none;}
+        nav li.current a {color: #777; cursor: default;}
+
+        /* Для мобильных устройств */
+
+        @media handheld, only screen and (max-width: 780px) {
+            body {font-size: 16px;-webkit-text-size-adjust: none;}
+            .row, body, .container {width: 100%;min-width: 0;margin-left: 0px;margin-right: 0px;padding-left: 0px;padding-right: 0px;}
+            .row .sixcol, .row .twelvecol {width: auto;float: none;margin-left: 0px;margin-right: 0px;}
+        }
+
+        /* Для ширины экрана 720px и меньше */
+
+        @media (max-width: 720px) {
+            .trigger, .activetrigger, .dropcontainer ul, .trigger_demo2, .activetrigger_demo2, .dropcontainer_demo2 ul {width: 100% !important;}
+        }
+
+        .button{
+            text-decoration:none;
+            text-align:center;
+            padding:11px 32px;
+            border:solid 1px #004F72;
+            -webkit-border-radius:4px;
+            -moz-border-radius:4px;
+            border-radius: 4px;
+            font:18px Arial, Helvetica, sans-serif;
+            font-weight:bold;
+            color:#E5FFFF;
+            background-color: #1c5a6b;
+            background-image: -webkit-linear-gradient(top, #1c5a6b 0%, #1c5a6b 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1982A5', endColorstr='#1982A5',GradientType=0 );
+        }
+        .button:hover{
+            background-color: #22889a;
+            background-image: -webkit-linear-gradient(top, #22889a 0%, #22889a 100%);
+        }
+
+        .header{
+             position: absolute;
+             top: 0%;
+            left: 0%;
+             height: 10%;
+             width: 100%;
+            background-color: #2e2e2e;
+         }
+        .content{
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            height: 90%;
+            width: 77.5%;
+            background-image: url(images/scrn_big_1.jpg);
+            background-color: whitesmoke;
+        }
+        .sidebar{
+            position: absolute;
+            top: 10%;
+            left: 0%;
+            height: 90%;
+            width: 20%;
+            background-color: #24748c;
+        }
+        #createNew{
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            height: 6%;
+            width: 80%;
+        }
+        textarea {
+           /* font-family: ;*/
+            font-type: sans-serif;
+            font-size: 150%;
+            color: #2e2e2e;
+            margin: 0;
+            padding: 5%;
+            border-radius: 1px;
+            background-image: url(images/sign.gif);
+            background-size: 30%;
+            background-position-y: bottom;
+            background-position-x: right;
+            background-repeat: no-repeat;
+            background-color: white;
+            text-align:left;
+            resize: none;
+        }
+        #descriptionRecipe{
+
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            height: 40%;
+            width: 71.5%;
+        }
+        #newRecipeText{
+            position: absolute;
+            font-family: "Courier New", Courier;
+            font-style: inherit;
+            color: whitesmoke;
+            left: 10%;
+        }
+        #select{
+            position: absolute;
+            top: 55%;
+            left: 10%;
+            height: 20%;
+            width: 82%;
+        }
+
+        .dropcontainer_demo2 {
+            position:relative;
+            font-size: 16px;
+            color: #777;
+        }
+
+        .trigger_demo2 {
+            color: #777;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            background: #fff url(images/select-arrow-open.png) 98% center no-repeat;
+            display: block;
+            border: 1px solid #ccc;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        .trigger_demo2:hover {
+            color: #777;
+            background: #f5f5f5 url(images/select-arrow-open.png) 98% center no-repeat;
+        }
+
+        .activetrigger_demo2 {
+
+            color: #777;
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            background: #f5f5f5 url(images/select-arrow-close.png) 98% center no-repeat;
+            display: block;
+            border: 1px solid #ccc;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .activetrigger_demo2:hover {
+            background: #f5f5f5 url(images/select-arrow-close.png) 98% center no-repeat;
+            color: #777;
+        }
+
+        .activetrigger_demo2:active {
+            background: #f5f5f5 url(images/select-arrow-close.png) 98% center no-repeat;
+            color: #777;
+        }
+
+        .dropcontainer_demo2 ul {
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-top: none;
+            background: #fff;
+            list-style-type: none;
+            padding: 10px;
+            margin: 0;
+            width: 100%;
+            z-index: 100;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .dropcontainer_demo2 ul li {
+            padding: 0%;
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        .dropcontainer_demo2 ul li:hover {
+            background: #f5f5f5;
+            outline: none;
+        }
+
+        .dropcontainer_demo2 ul li:first-child {
+            display: none;
+        }
+
+        .dropcontainer_demo2 ul li:last-child {
+            border-bottom: none;
+        }
+
+        .dropdownhidden_demo2 {
+            display: none;
+        }
+
+        .dropdownvisible_demo2 {
+            height: auto;
+        }
+
+        .dropdownvisible_demo2 {
+            height: 150px;
+            overflow-y: scroll;
+        }
+
+    h2{
+        color: whitesmoke;
+        font-family: "Courier New", Courier;
+        font-style: inherit;
+        position: absolute;
+        right: 6%;
+        top: 30%;
+    }
+    .round {
+        border-radius: 100%; /* Радиус скругления */
+        border: 0px solid; /* Параметры рамки */
+        position: absolute;
+        top: 5%;
+        right: 1%;
+    }
+    .pulse {
+        position: absolute;
+        top: 5%;
+        right: 10%;
+    }
+    .recipe{
+        height: 10%;
+        width: 25%;
+        background-color: #b2cee7;
+    }
+    .recipe:hover{
+        background-color: #6a92a9;
+    }
+    .appointPopUp{
+        position: absolute;
+        right: 0;
+        top:0%;
+        height: 100%;
+        width: 30%;
+        /*margin: 2%;*/
+        background-color: #cccccc;
+    }
+    #patientData{
+        position: absolute;
+        left: 25%;
+    }
+    #patientDataInput{
+        position: absolute;
+        left: 10%;
+        top: 10%;
+    }
+        .lable1{
+            position: absolute;
+            top: 30px;
+            left: 7%;
+            width: 150px;
+        }
+        .lable2{
+            position: absolute;
+            top: 100px;
+            left: 7%;
+            width: 150px;
+        }
+        .lable3{
+            position: absolute;
+            top: 170px;
+            left: 7%;
+            width: 150px;
+        }
+        .lable4{
+            position: absolute;
+            top: 240px;
+            left: 7%;
+            width: 150px;
+        }
+        .lable5{
+            position: absolute;
+            top: 310px;
+            left: 7%;
+            width: 150px;
+        }
+
+        .input1{
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+            position: absolute;
+            top: 50px;
+            left: 7%;
+            height: 25px;
+            width: 300px;
+        }
+        .input2{
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+            position: absolute;
+            top: 120px;
+            left: 7%;
+            height: 25px;
+            width: 300px;
+        }
+        .input3{
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+            position: absolute;
+            top: 190px;
+            left: 7%;
+            height: 25px;
+            width: 300px;
+        }
+        .input4{
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+            position: absolute;
+            top: 260px;
+            left: 7%;
+            height: 25px;
+            width: 300px;
+        }
+        .input5{
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+            position: absolute;
+            top: 330px;
+            left: 7%;
+            height: 60px;
+            width: 300px;
+        }
+        #appointButton{
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            height: 6%;
+            width: 80%;
+            text-decoration:none;
+            text-align:center;
+            padding:11px 32px;
+            border:solid 1px #4a484e;
+            -webkit-border-radius:4px;
+            -moz-border-radius:4px;
+            border-radius: 4px;
+            font:18px Arial, Helvetica, sans-serif;
+            font-weight:bold;
+            color:#E5FFFF;
+            background-color: #5e656b;
+            background-image: -webkit-linear-gradient(top, #5e656b 0%, #5e656b 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1982A5', endColorstr='#1982A5',GradientType=0 );
+        }
+        #appointButton:hover{
+            background-color: #767d83;
+            background-image: -webkit-linear-gradient(top, #767d83 0%, #767d83 100%);
+        }
+        .drag{
+            position: absolute;
+            top: 35%;
+            left: 22%;
+            font-family: "Courier New", Courier;
+            font-type: sans-serif;
+            font-size: 120%;
+            color: #2e2e2e;
+        }
+        #first{
+            position: absolute;
+            top: 5%;
+            left: 2%;
+        }
+        #second{
+            position: absolute;
+            top: 20%;
+            left: 2%;
+        }
+        #third{
+            position: absolute;
+            top: 35%;
+            left: 2%;
+        }
+        #fourth{
+            position: absolute;
+            top: 50%;
+            left: 2%;
+        }
+        #fifth{
+            position: absolute;
+            top: 10%;
+            left: 7%;
+            margin: 2%;
+        }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <h2 class="house">House M.D.</h2>
+    <p><img src="images/hugh-laurie.jpg" width="68" height="68" alt="" class="round"></p>
+    <p><img src="images/pulse.png" width="500" height="68" class="pulse"></p>
+</div>
+<div class="content">
+    <div class="recipe" id="first" onclick="chooseRecipe(this)">
+        <label class="drag"><b>{ Alendronate }</b></label>
+    </div>
+    <div class="recipe" id="second">
+        <label class="drag"><b>{ Venlafaxine }</b></label>
+    </div>
+    <div class="recipe" id="third">
+        <label class="drag"><b>{ L-Carnitine }</b></label>
+    </div>
+
+    <div class="appointPopUp">
+        <h1 id="patientData">Add patient data</h1>
+        <div id="patientDataInput">
+                    <label class="lable1"><b>Patient Wallet:</b></label>
+                    <input class="input1" name="first" type="text">
+                    <label class="lable2"><b>Clinic Wallet:</b></label>
+                    <input class="input2" name="last" type="text" value="0xff8d447957b14cc18e9e6bf485a257f99f83eb2e321ed70af692db63d7b1e2eb6903b3ae">
+                    <label class="lable3"><b>Amount</b></label>
+                    <input class="input3" name="last" type="text">
+                    <label class="lable4"><b>Patient Name:</b></label>
+                    <input class="input4" name="first" type="text">
+                    <label class="lable5"><b>Additional Info:</b></label>
+                    <input class="input5" name="last" type="text">
+        </div>
+        <button id="appointButton" onclick="appoint()">Appoint:</button>
+    </div>
+</div>
+<div class="sidebar">
+    <h1 id="newRecipeText">Create New Recipe</h1>
+    <textarea id="descriptionRecipe"></textarea>
+    <div id="select">
+        <form action="#">
+            <p>
+                <!--<label class="label">Choose the drags</label>-->
+                <select class="turnintodropdown_demo2">
+                    <option>Choose the drags:</option>
+                    <option>Omeprazole</option>
+                    <option>Alendronate</option>
+                    <option>Pracetamol</option>
+                    <option>Venlafaxine</option>
+                    <option>Ramipril</option>
+                    <option>Monteleukast</option>
+                    <option>Cinacalcet</option>
+                    <option>Felodipine</option>
+                    <option>Prednizolone</option>
+                    <option>Latanoprost</option>
+                    <option>L-carnitine</option>
+                </select>
+            </p>
+        </form>
+    </div>
+
+    <button id="createNew" class="button" onclick="createRecipe(selectedDrag)">Add Recipe</button>
+</div>
+
+</body>
+</html>
